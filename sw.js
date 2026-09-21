@@ -1,7 +1,7 @@
-/* Offline shell. Bump VERSION whenever index.html changes. */
-const VERSION="ca26-app-v2", TILES="ca26-tiles";
+/* Offline shell. Raise VERSION by one whenever index.html changes. */
+const VERSION="ca26-app-v3", TILES="ca26-tiles";
 const SHELL=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png","icon-180.png"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(VERSION).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
+self.addEventListener("install",e=>{e.waitUntil(caches.open(VERSION).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:"reload"})))).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith("ca26-app")&&k!==VERSION).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{
   const u=new URL(e.request.url); if(e.request.method!=="GET")return;

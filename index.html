@@ -687,7 +687,7 @@ main[hidden]{display:none}
 
 /* tab bar */
 .tabs{display:flex;background:var(--tab);border-top:1px solid var(--line);flex:none}
-.tabs button{flex:1;min-height:58px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;color:var(--muted);font-weight:600}
+.tabs button{flex:1;min-width:0;min-height:58px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;color:var(--muted);font-weight:600}
 .tabs button svg{width:24px;height:24px;fill:currentColor}
 .tabs button[aria-selected="true"]{color:var(--glacier)}
 .tabs button[aria-selected="true"] span{border-bottom:2px solid currentColor}
@@ -812,6 +812,31 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .leaflet-touch .leaflet-bar a{width:48px;height:48px;line-height:48px;font-size:26px}
 .me{width:22px;height:22px;border-radius:50%;background:#2475B0;border:3px solid #fff;box-shadow:0 0 0 2px rgba(36,117,176,.45),0 1px 5px rgba(0,0,0,.5)}
 
+/* nature */
+.tally{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.bar{height:10px;border-radius:99px;background:var(--line);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--spruce);border-radius:99px}
+.natbar{display:flex;gap:8px;overflow-x:auto;margin:0 -14px 6px;padding:4px 14px;scrollbar-width:none}.natbar::-webkit-scrollbar{display:none}
+.nath{font-size:24px;color:var(--spruce);margin:16px 0 8px}
+.nat{display:flex;gap:4px;align-items:flex-start;background:var(--card);border-radius:12px;margin-bottom:8px;padding:4px 12px 4px 4px;box-shadow:var(--shadow)}
+.nat.seen{background:color-mix(in srgb,var(--card) 82%,var(--spruce))}
+.tick{flex:none;width:52px;height:56px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.tick input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.tick span{width:30px;height:30px;border-radius:8px;border:2.5px solid var(--muted);display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.tick input:checked+span{background:var(--sign);border-color:var(--sign)}
+.tick input:checked+span::after{content:"";width:8px;height:15px;border:solid #fff;border-width:0 3.5px 3.5px 0;transform:rotate(45deg) translate(-1px,-2px)}
+.tick input:focus-visible+span{outline:3px solid var(--larch);outline-offset:2px}
+.nat details{flex:1;min-width:0}
+.nat summary{list-style:none;cursor:pointer;min-height:56px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:8px 22px 8px 4px;position:relative}
+.nat summary::-webkit-details-marker{display:none}
+.nat summary::after{content:"";position:absolute;right:4px;top:24px;width:8px;height:8px;border:solid var(--muted);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.nat details[open] summary::after{transform:rotate(-135deg);top:28px}
+.family .nat{padding-left:12px}
+.nn{font-weight:650}
+.ch{font-size:13px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.c1{background:var(--sign);color:#fff}.c2{background:var(--heads-bg);color:#1d1a10}.c3{border:1.5px solid var(--muted);color:var(--muted)}.c4{border:1.5px dashed var(--line);color:var(--muted)}
+.sn{font-size:13px;color:var(--spruce);font-weight:700;flex-basis:100%}
+.nat dl{margin:0 0 10px 4px}.nat dt{font:600 15px/1.2 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-top:8px}.nat dd{margin:1px 0 0;font-size:16px}
+
 </style>
 </head>
 <body>
@@ -823,11 +848,13 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
     <div class="maplist" id="maplist" hidden></div>
     <div class="sheet" id="sheet" role="dialog" aria-label="Place details"></div>
   </main>
+  <main id="view-nature" hidden aria-label="Nature spotting"></main>
   <main id="view-tips" hidden aria-label="Tips"></main>
   <main id="view-links" hidden aria-label="Links"></main>
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button role="tab" data-tab="today" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h2v2h8V3h2v2h2v16H4V5h2V3zm0 7v9h12v-9H6z"/></svg><span>Today</span></button>
     <button role="tab" data-tab="map" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 6 2 5-2v14l-5 2-6-2-5 2V6l5-2zm0 2.2v11.6l6 2V8.2l-6-2z"/></svg><span>Map</span></button>
+    <button role="tab" data-tab="nature" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c0-7 5-13 16-14-1 11-7 16-14 16l-1.5 1.5L3 20l1-2zm3-1c5-1 8-4 10-9-5 2-8 5-10 9z"/></svg><span>Nature</span></button>
     <button role="tab" data-tab="tips" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 22 12 12 22 2 12 12 2zm-1 5v7h2V7h-2zm0 9v2h2v-2h-2z"/></svg><span>Tips</span></button>
     <button role="tab" data-tab="links" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a4 4 0 0 1 0-5.6l3-3a4 4 0 0 1 5.6 5.6l-1.5 1.5-1.4-1.4 1.5-1.5a2 2 0 0 0-2.8-2.8l-3 3a2 2 0 0 0 0 2.8l-1.4 1.4zm2.8-2.8a4 4 0 0 1 0 5.6l-3 3a4 4 0 0 1-5.6-5.6l1.5-1.5 1.4 1.4-1.5 1.5a2 2 0 0 0 2.8 2.8l3-3a2 2 0 0 0 0-2.8l1.4-1.4z"/></svg><span>Links</span></button>
   </nav>
@@ -1392,6 +1419,102 @@ const TRIP = {
   wxDay: { 1:[0,1], 2:[0,2], 3:[3,4], 4:[5,6], 5:[7,8], 6:[7,7], 7:[5,9], 8:[5,10], 9:[11,11], 10:[12,11] }
 };
 </script>
+<script>/* Nature spotting list for late September to early October on this route.
+   g: group. c: chance (1 likely, 2 possible, 3 lucky, 4 out of season). d: trip days where it is most likely.
+   id: how to recognise it. w: where on this route. t: when. s: safety or etiquette (optional). */
+const NATURE_GROUPS = { m:"Mammals", b:"Birds", r:"Reptiles and amphibians", f:"Fish" };
+const CHANCE = { 1:"Likely", 2:"Possible", 3:"Lucky", 4:"Out of season" };
+const NATURE = [
+/* ---- large mammals ---- */
+{k:"elk",g:"m",n:"Elk (wapiti)",c:1,d:[4,5,6,7,8],id:"Large tan deer with a dark brown neck and a pale cream rump patch. Bulls carry tall, swept-back antlers and are in full rut now: listen for the high, whistling bugle.",w:"Banff townsite edges, Vermilion Lakes, Bow Valley Parkway, Whistlers Campground and Jasper town.",t:"Dawn and dusk. Rut peaks mid September to mid October, so bulls are vocal and visible all day.",s:"Stay 30 m away. Rutting bulls charge people and vehicles; never get between a bull and his cows."},
+{k:"muledeer",g:"m",n:"Mule deer",c:1,d:[1,2,3,4,5,6,7,8,9],id:"Grey-brown deer with very large ears, a white rump and a thin, black-tipped rope of a tail. Bounds away stiff-legged on all four feet at once.",w:"Okanagan hillsides above Kelowna, Golden, Banff and Jasper townsites, campground edges.",t:"Early morning and evening."},
+{k:"whitetail",g:"m",n:"White-tailed deer",c:2,d:[3,4,9,10],id:"Redder than a mule deer with smaller ears. The broad tail is brown on top and flips up to show a bright white flag as it runs.",w:"Valley bottoms: Columbia Valley near Golden, Bow Valley, Kananaskis meadows.",t:"Dawn and dusk, often at field edges."},
+{k:"moose",g:"m",n:"Moose",c:3,d:[5,6,7,9],id:"Huge, dark and long-legged with a humped shoulder, overhanging nose and a dewlap under the chin. Bulls have broad, flat antlers.",w:"Willow flats and wet meadows: Waterfowl Lakes and the upper Bow on the Parkway, Maligne Road and Pocahontas ponds near Jasper, Hwy 40 in Kananaskis.",t:"First and last light. Rut runs late September to mid October, so bulls are on the move.",s:"Stay 30 m away, more for a rutting bull. They are faster and less predictable than bears."},
+{k:"bighorn",g:"m",n:"Rocky Mountain bighorn sheep",c:1,d:[5,7,9],id:"Stocky, sandy-brown sheep with a white rump and muzzle. Rams have massive curled horns; ewes have short, slightly curved spikes.",w:"Roadside on the Parkway near Tangle Falls and the Icefield, Hwy 16 east of Jasper, Lake Minnewanka road, and Hwy 40 in Kananaskis where they lick road salt.",t:"Any time of day. Herds are coming down to lower slopes now.",s:"Slow right down. They stand in the road and do not move for vehicles."},
+{k:"calbighorn",g:"m",n:"California bighorn sheep",c:2,d:[1,2],id:"The Okanagan’s bighorn: slightly smaller and darker than the Rockies form, with more flared horns.",w:"Rocky bluffs along Westside Road near Bear Creek, and the dry slopes between Peachland and Summerland.",t:"Morning and late afternoon on open, sunny slopes. Rut begins in October."},
+{k:"goat",g:"m",n:"Mountain goat",c:2,d:[3,4,5,7],id:"All white and shaggy with a beard, a shoulder hump and short, black dagger horns. Sheep are brown; goats are white.",w:"Goats and Glaciers viewpoint south of Athabasca Falls, cliffs above the Parkway near the Icefield, slopes in Yoho and Rogers Pass. Scan high ledges with binoculars.",t:"Midday is fine: look for white dots that move on grey cliffs."},
+{k:"blackbear",g:"m",n:"Black bear",c:2,d:[3,4,5,6,7,8,9],id:"No shoulder hump, a straight ‘Roman’ face profile and tall, pointed ears. Colour is no guide: they can be black, brown or cinnamon.",w:"Roadside berry patches and avalanche slopes: Rogers Pass, Yoho, Bow Valley Parkway, the Parkway north of Saskatchewan Crossing, Maligne Road.",t:"Feeding up to 20 hours a day before denning, so active all day. Best at dawn and dusk.",s:"Stay 100 m away and in the vehicle. Do not stop in the traffic lane; pull fully off and move on after a minute."},
+{k:"grizzly",g:"m",n:"Grizzly bear",c:3,d:[4,5,7,8,9],id:"Prominent shoulder hump, a dished face, small round ears and long pale claws. Often grizzled blond over brown.",w:"Open slopes and valley bottoms: Bow Summit area, Lake Louise ski hill slopes (seen from the Park and Ride), Larch Valley, Highwood and Kananaskis valleys.",t:"Dawn and dusk. Digging roots and eating buffaloberries before denning in November.",s:"Stay 100 m away. Carry bear spray on the belt, make noise on trails, and obey any group-of-four restriction at Larch Valley."},
+{k:"wolf",g:"m",n:"Grey wolf",c:3,d:[4,5,6,7],id:"Much bigger than a coyote, long-legged with a broad muzzle and large feet. Coat from white through grey to black. Tail held straight out when trotting.",w:"Bow Valley Parkway, the Parkway flats near Saskatchewan Crossing, Athabasca Valley and Hwy 16 east of Jasper.",t:"First light, often trotting along the road or railway. Listen for howling from camp at night.",s:"Stay 100 m away."},
+{k:"coyote",g:"m",n:"Coyote",c:2,d:[1,2,3,4,5,6,7,8,9,10],id:"Collie-sized, slim, grey-buff with a pointed muzzle and big ears. Runs with its bushy tail held down.",w:"Meadows and road verges throughout, including Okanagan orchards and Calgary’s edges.",t:"Dawn and dusk; you may hear yipping choruses at night."},
+{k:"redfox",g:"m",n:"Red fox",c:3,d:[5,6,7,9],id:"Small and light, rusty red with black legs and a white-tipped tail. Dark ‘cross fox’ forms occur in the Rockies.",w:"Occasional along the Parkway and around Jasper and Kananaskis.",t:"Dusk and after dark."},
+{k:"cougar",g:"m",n:"Cougar",c:3,d:[2,4,9],id:"Large tawny cat with a small head and a very long, thick, black-tipped tail.",w:"Present throughout, especially the Bow Valley and Okanagan hills, but almost never seen.",t:"Dusk to dawn.",s:"If you meet one: face it, look big, back away slowly, never run."},
+{k:"lynx",g:"m",n:"Canada lynx",c:3,d:[5,6,7,9],id:"Long-legged grey cat with huge furry paws, black ear tufts and a short tail with a fully black tip.",w:"Spruce forest along the Parkway, Maligne Road and Kananaskis. A road crossing at dusk is the usual sighting.",t:"Dusk and dawn."},
+{k:"caribou",g:"m",n:"Woodland caribou",c:3,d:[5,6,7],id:"Dark brown body with a creamy white neck and mane; both sexes carry antlers.",w:"Jasper’s remaining herds live in remote high country (Tonquin and Brazeau). A roadside sighting near Sunwapta or Beauty Creek would be exceptional.",t:"Any time; report sightings to Parks Canada."},
+/* ---- small mammals ---- */
+{k:"pika",g:"m",n:"American pika",c:1,d:[5,7,8],id:"Hamster-sized, round, grey-brown with round ears and no visible tail. Gives a sharp, nasal ‘eep!’ from the rocks.",w:"Boulder fields: the Moraine Lake Rockpile is one of the best places in the Rockies. Also Parker Ridge and the Bow Lake moraines.",t:"Active all day now, carrying mouthfuls of plants to dry as winter hay. Sit still by the rocks for five minutes."},
+{k:"marmot",g:"m",n:"Hoary marmot",c:4,d:[5,7,8],id:"Cat-sized, silver-grey shoulders, brown rump, black feet. Loud, piercing whistle.",w:"Alpine boulder fields at Parker Ridge, Bow Summit and Larch Valley.",t:"Most are hibernating by mid to late September. A warm, sunny afternoon might bring a late one out."},
+{k:"ybmarmot",g:"m",n:"Yellow-bellied marmot",c:4,d:[1,2],id:"Chunky, brown with a yellow-orange belly and a pale band across the nose.",w:"Okanagan rock piles and the Myra Canyon rock cuts.",t:"In the Okanagan they go underground from late summer, so a sighting now is unlikely."},
+{k:"gmsquirrel",g:"m",n:"Golden-mantled ground squirrel",c:2,d:[4,5,7,8],id:"Looks like a large chipmunk, but the side stripes stop at the shoulder: no stripes on the face. Coppery head and shoulders.",w:"Rocky viewpoints: Moraine Lake, Peyto Lake, Bow Lake, Takakkaw.",t:"Sunny days until early October, then they hibernate.",s:"They beg at viewpoints. Feeding any wildlife in a national park is illegal."},
+{k:"columbian",g:"m",n:"Columbian ground squirrel",c:4,d:[4,5,6],id:"Upright ‘gopher’ with a grey back, russet face and legs, and a sharp chirp.",w:"Meadows and picnic areas.",t:"Hibernates from mid August, so you will almost certainly see only their burrows."},
+{k:"chipmunk",g:"m",n:"Least chipmunk",c:1,d:[3,4,5,6,7,8,9],id:"Tiny, quick, with bold dark and pale stripes running along the back and across the face to the nose. Tail held straight up when it runs.",w:"Campgrounds, trailheads and rock piles throughout the Rockies.",t:"Daytime until cold weather sets in through October."},
+{k:"redsquirrel",g:"m",n:"Red squirrel",c:1,d:[3,4,5,6,7,8,9],id:"Small, rusty-red tree squirrel with a white eye-ring and white belly. Long, scolding rattle from the branches.",w:"Every conifer forest and campground. Look for middens: big piles of cone scales under spruce.",t:"All day; busy caching cones now."},
+{k:"hare",g:"m",n:"Snowshoe hare",c:2,d:[5,6,7,9],id:"Large hind feet and black-tipped ears. In early October the coat is patchy, turning from brown to white from the feet and ears up.",w:"Forest edges and campground loops at Whistlers, Tunnel Mountain and Mount Kidd.",t:"Dusk and dawn."},
+{k:"beaver",g:"m",n:"Beaver",c:2,d:[6,9],id:"Large brown rodent swimming with only its head showing; broad flat tail that slaps the water in alarm.",w:"Cottonwood Slough and the ponds by Lake Annette and Lake Edith in Jasper (on your bike route), Vermilion Lakes in Banff, Kananaskis ponds.",t:"The hour before dark. Very busy in autumn, cutting and caching branches for winter."},
+{k:"muskrat",g:"m",n:"Muskrat",c:2,d:[6,8],id:"Rat-sized swimmer, a quarter the size of a beaver, with a thin tail that snakes side to side at the surface.",w:"Vermilion Lakes, Jasper’s valley ponds, Okanagan marsh edges.",t:"Daytime and dusk."},
+{k:"porcupine",g:"m",n:"Porcupine",c:3,d:[4,5,7,9],id:"Dark, slow and rounded with long yellowish guard hairs over the quills. Often a dark lump high in a tree.",w:"Subalpine forest along the Parkway and in Yoho and Kananaskis.",t:"Dusk and night; occasionally on the road verge."},
+{k:"marten",g:"m",n:"American marten",c:3,d:[4,5,6,7,9],id:"Slim, cat-sized weasel with rich brown fur, a bushy tail, a pale face and an orange-buff throat patch.",w:"Old spruce and fir forest; sometimes bold around campgrounds and trailheads.",t:"Dawn and dusk, often chasing red squirrels through the trees."},
+{k:"otter",g:"m",n:"River otter",c:3,d:[2,6],id:"Long, sleek and dark with a thick tapering tail; swims with a rolling, porpoising motion, often in family groups.",w:"Okanagan Lake shoreline and creek mouths; Athabasca River backwaters near Jasper.",t:"Early morning."},
+{k:"bats",g:"m",n:"Little brown bat",c:3,d:[1,2],id:"Small bat with fluttering, erratic flight low over water.",w:"Over the lake at Bear Creek at last light.",t:"Warm evenings only; most are heading to hibernation sites by October."},
+/* ---- birds: raptors ---- */
+{k:"goldeneagle",g:"b",n:"Golden eagle",c:1,d:[9,10],id:"Very large, dark brown eagle with a golden nape. Soars with wings in a shallow V. Young birds show white patches in the wing and a white tail base.",w:"Kananaskis is a world-class migration corridor: thousands follow the front ranges south. Scan the ridge of Mount Lorette and Mount Allan from Hwy 40 near Nakiska and from Mount Kidd RV Park.",t:"Peak passage is the first half of October, from late morning to mid afternoon on days with a westerly wind. Day 9 is perfectly timed."},
+{k:"baldeagle",g:"b",n:"Bald eagle",c:1,d:[1,2,3,6],id:"Adults unmistakable: white head and tail, yellow bill. Young birds are mottled brown for four to five years. Soars on flat, plank-like wings.",w:"Fraser Valley and Okanagan Lake shoreline, where they gather for spawning kokanee; Shuswap and Columbia rivers; Athabasca River.",t:"All day; perched in lakeside cottonwoods and snags."},
+{k:"osprey",g:"b",n:"Osprey",c:3,d:[1,2,3],id:"White below with a dark eye-stripe and crooked, gull-like wings. Hovers, then plunges feet first for fish.",w:"Okanagan Lake and the Shuswap. Huge stick nests sit on poles and pilings.",t:"Most have left for South America by late September; a few stragglers remain."},
+{k:"redtail",g:"b",n:"Red-tailed hawk",c:1,d:[1,2,3,9,10],id:"Stocky hawk with broad wings, a dark band of streaks across a pale belly and, in adults, a brick-red tail.",w:"Fence posts and poles along Hwy 1, Hwy 97 and the foothills into Calgary.",t:"All day; migrating now."},
+{k:"kestrel",g:"b",n:"American kestrel",c:2,d:[1,2,3,10],id:"Robin-sized falcon, rusty back and tail, two black face stripes. Hovers over verges and bobs its tail when perched.",w:"Roadside wires in the Okanagan and the prairie edge near Calgary.",t:"Daytime."},
+{k:"ghowl",g:"b",n:"Great horned owl",c:3,d:[1,2,6,9],id:"Big, barrel-shaped owl with ear tufts, yellow eyes and a white throat. Deep, five-note hoot.",w:"Cottonwoods at Bear Creek and wooded campgrounds.",t:"Listen from camp after dark; pairs start duetting in autumn."},
+{k:"pygmyowl",g:"b",n:"Northern pygmy-owl",c:3,d:[4,6,8,9],id:"Sparrow-sized owl with a long tail and false ‘eyes’ on the back of its head. Often mobbed by noisy chickadees.",w:"Forest edges in the Bow Valley, Jasper and Kananaskis; perches on the very tip of a spruce.",t:"Hunts by day. Evenly spaced, single toots."},
+/* ---- birds: corvids ---- */
+{k:"nutcracker",g:"b",n:"Clark’s nutcracker",c:1,d:[4,5,7,8],id:"Pale grey, jay-sized, with black wings, white wing patches and outer tail, and a long dagger bill. Harsh, grating ‘kraaa’.",w:"Moraine Lake, Lake Louise, Peyto and Bow Summit car parks, and anywhere with whitebark pine.",t:"All day. Each bird is caching thousands of pine seeds for winter.",s:"They will land on your hand. Please do not feed them."},
+{k:"canadajay",g:"b",n:"Canada jay (whisky jack)",c:1,d:[4,5,6,7,8,9],id:"Fluffy and soft grey with a white forehead and face and a dark cap at the back. Silent, gliding flight; arrives at picnics within minutes.",w:"Subalpine forest, trailheads and campgrounds everywhere in the Rockies.",t:"All day."},
+{k:"stellers",g:"b",n:"Steller’s jay",c:2,d:[1,2,3,4],id:"BC’s provincial bird: deep blue body with a charcoal-black head and tall crest. Harsh ‘shaak-shaak’.",w:"Conifer forest west of the divide: Coquihalla, Myra Canyon, Revelstoke, Rogers Pass, Yoho.",t:"All day."},
+{k:"magpie",g:"b",n:"Black-billed magpie",c:1,d:[2,4,6,7,8,9,10],id:"Bold black and white with a very long, iridescent green-blue tail.",w:"Towns and campgrounds: Kelowna, Banff, Canmore, Jasper, Calgary.",t:"All day."},
+{k:"raven",g:"b",n:"Common raven",c:1,d:[1,2,3,4,5,6,7,8,9,10],id:"Huge, all-black, with a heavy bill, shaggy throat and wedge-shaped tail. Deep ‘cronk’. Crows are smaller with a fan-shaped tail.",w:"Everywhere, especially car parks and roadsides.",t:"All day; watch pairs tumbling in the wind at viewpoints."},
+/* ---- birds: water ---- */
+{k:"dipper",g:"b",n:"American dipper",c:2,d:[4,5,7,9],id:"Plump, slate-grey, short-tailed bird that bobs constantly on mid-stream rocks, then walks under water.",w:"Fast, clear water: Natural Bridge and the Kicking Horse River, Sunwapta and Athabasca Falls, Troll Falls creek.",t:"All day, all year. Look for the white flash of its eyelid as it blinks."},
+{k:"loon",g:"b",n:"Common loon",c:2,d:[2,5,6],id:"Low-slung diver with a dagger bill. Adults are moulting from chequered black and white into plain grey-brown and white for winter.",w:"Okanagan Lake, and Jasper’s valley lakes including Annette, Edith and Pyramid.",t:"Calm mornings; the wailing call carries across the water at dusk."},
+{k:"goldeneye",g:"b",n:"Barrow’s goldeneye",c:2,d:[4,5,6,8],id:"Drake: purple-black head with a white crescent in front of a golden eye. Female: chocolate head, grey body, mostly yellow bill.",w:"Mountain lakes: Emerald, Bow, Moraine, and Jasper’s valley lakes.",t:"Until the lakes freeze."},
+{k:"merganser",g:"b",n:"Common merganser",c:1,d:[2,3,4,6],id:"Long, low duck with a thin, hooked red bill. Drakes are white with a dark green head; females grey with a shaggy rust head and sharp white chin.",w:"Okanagan Lake, where flocks follow the kokanee run; Columbia, Bow and Athabasca rivers.",t:"All day."},
+{k:"goose",g:"b",n:"Canada goose",c:1,d:[1,2,3,6,9,10],id:"Brown body, black neck and head, white chinstrap. V-formations overhead, honking.",w:"Lakeshores, parks and fields from Vancouver to Calgary.",t:"All day; big migrating skeins now."},
+{k:"swan",g:"b",n:"Trumpeter or tundra swan",c:3,d:[1,2,6,9],id:"Huge, all-white, long-necked, with a black bill. Trumpeters have a deep, bugling call; tundras a higher yodel.",w:"Okanagan Lake bays, Vermilion Lakes, Jasper’s Talbot Lake and foothills ponds.",t:"Migration builds through October, so you are at the early edge."},
+{k:"heron",g:"b",n:"Great blue heron",c:2,d:[1,2],id:"Tall, grey-blue, with a dagger bill and a slow, deep wingbeat; neck folded into an S in flight.",w:"Fraser Valley ditches and Okanagan Lake shallows, including the Bear Creek delta.",t:"Dawn and dusk, standing motionless at the water’s edge."},
+{k:"kingfisher",g:"b",n:"Belted kingfisher",c:2,d:[1,2,3,6],id:"Big-headed, shaggy-crested, blue-grey and white. Loud, dry rattle as it flies along the bank.",w:"Bear Creek mouth, Okanagan shoreline, Shuswap River, Jasper’s valley lakes.",t:"All day."},
+{k:"crane",g:"b",n:"Sandhill crane",c:3,d:[1,2,3],id:"Tall and grey with a red crown. Flies with neck outstretched, in high, wheeling flocks; far-carrying, rolling bugle.",w:"Passing high over the Okanagan and Shuswap on migration.",t:"Late September on clear days with a north wind. Usually heard before seen."},
+/* ---- birds: forest and alpine ---- */
+{k:"ptarmigan",g:"b",n:"White-tailed ptarmigan",c:3,d:[5,7],id:"Small alpine grouse with feathered feet. Right now it is patchwork: mottled grey-brown turning white from the belly up.",w:"Above the treeline at Parker Ridge; also Sentinel Pass above Larch Valley.",t:"Freezes rather than flies, so walk slowly and scan the ground near the trail."},
+{k:"sprucegrouse",g:"b",n:"Spruce grouse",c:2,d:[4,5,6,7,8,9],id:"Chicken-like and absurdly tame. Males are slate and black with a red eyebrow comb and white-spotted flanks; females barred brown.",w:"On the ground or low branches in spruce and pine forest; often on trails and quiet campground loops.",t:"Early morning, picking grit from trails and road edges."},
+{k:"duskygrouse",g:"b",n:"Dusky grouse",c:3,d:[2,4,8],id:"Large, plain blue-grey grouse with a long, dark tail.",w:"Open slopes at the forest edge: Myra Canyon, Yoho, Larch Valley approach.",t:"Morning."},
+{k:"ruffedgrouse",g:"b",n:"Ruffed grouse",c:2,d:[3,6,9],id:"Crested, mottled brown grouse with a fan tail crossed by a black band.",w:"Aspen and mixed woods: Golden, Jasper’s valley trails, Kananaskis.",t:"Morning and evening on trail edges. Some males ‘drum’ again in autumn: a low, accelerating thump."},
+{k:"quail",g:"b",n:"California quail",c:1,d:[1,2],id:"Plump, grey, with a scaled belly and a black, comma-shaped topknot. Runs in tight coveys; call sounds like ‘chi-CA-go’.",w:"Everywhere in Kelowna: orchards, vineyards, garden hedges and the Bear Creek campground.",t:"All day; coveys of 20 or more in autumn."},
+{k:"mtnchickadee",g:"b",n:"Mountain chickadee",c:1,d:[2,4,5,6,7,8,9],id:"Like a black-capped chickadee but with a white eyebrow through the black cap. Hoarse ‘chick-a-dzee-dzee’.",w:"Conifer forest throughout the mountains and the Okanagan pines.",t:"All day, in mixed flocks with nuthatches and kinglets."},
+{k:"bcchickadee",g:"b",n:"Black-capped chickadee",c:1,d:[1,2,3,6,9],id:"Black cap and bib, white cheeks, buff flanks. Clear ‘chick-a-dee-dee-dee’.",w:"Deciduous woods, valley bottoms, gardens and campgrounds.",t:"All day."},
+{k:"borealchickadee",g:"b",n:"Boreal chickadee",c:3,d:[5,6,7],id:"Brown cap, grey-brown back and rich cinnamon flanks. Slow, wheezy ‘tsik-a-day-day’.",w:"Dense spruce along the Parkway and around Jasper.",t:"All day; quieter than other chickadees."},
+{k:"nuthatch",g:"b",n:"Red-breasted nuthatch",c:1,d:[2,3,4,5,6,7,8,9],id:"Tiny, blue-grey above and rusty below, with a black eye-line and white eyebrow. Walks head first down trunks. Nasal ‘yank-yank’, like a toy horn.",w:"Conifers everywhere.",t:"All day."},
+{k:"kinglet",g:"b",n:"Golden-crowned kinglet",c:2,d:[3,4,5,6,7,8],id:"Minute olive bird with a yellow crown bordered in black, constantly flicking its wings. Very high, thin ‘tsee-tsee-tsee’.",w:"High in spruce and fir.",t:"All day in mixed flocks."},
+{k:"junco",g:"b",n:"Dark-eyed junco",c:1,d:[1,2,3,4,5,6,7,8,9],id:"Small sparrow with a dark hood, pink bill and white outer tail feathers that flash as it flies up from the ground.",w:"Trail edges, campgrounds and roadsides.",t:"All day; flocks are moving downslope now."},
+{k:"variedthrush",g:"b",n:"Varied thrush",c:2,d:[3,4,5,8],id:"Robin-shaped, slate-blue above and orange below with a black breast band and orange eyebrow and wing bars.",w:"Damp, mossy conifer forest: Rogers Pass cedar groves, Yoho, the Moraine Lake shoreline.",t:"Dawn. A single eerie, buzzing whistle, each on a different pitch."},
+{k:"pileated",g:"b",n:"Pileated woodpecker",c:3,d:[2,3,6,9],id:"Crow-sized, black, with a flaming red crest and white flashes under the wing. Leaves large rectangular holes in dead trees.",w:"Mature mixed forest: Bear Creek canyon, Golden, Jasper and Kananaskis valley woods.",t:"All day; loud, laughing call."},
+{k:"threetoed",g:"b",n:"American three-toed woodpecker",c:2,d:[5,6],id:"Black and white with barred flanks; males have a yellow cap. Flakes bark off dead conifers, leaving reddish patches.",w:"The 2024 burn around Jasper is prime habitat: look in blackened spruce and pine near Whistlers and along the Parkway’s north end.",t:"All day; listen for quiet, persistent tapping."},
+{k:"flicker",g:"b",n:"Northern flicker",c:1,d:[1,2,3,6,9,10],id:"Brown, spotted woodpecker with a black bib. Shows a white rump and salmon-red underwings as it flies up from the ground, where it feeds on ants.",w:"Open woods, campgrounds and lawns.",t:"All day; migrating now."},
+{k:"bluebird",g:"b",n:"Mountain bluebird",c:3,d:[2,9,10],id:"Male is sky blue all over; female grey with blue in the wings and tail. Hovers low over open ground.",w:"Okanagan grasslands and the foothills fence lines east of Kananaskis.",t:"Most leave through September; late flocks linger into early October."},
+{k:"meadowlark",g:"b",n:"Western meadowlark",c:3,d:[1,2],id:"Starling-shaped, streaky brown above with a bright yellow breast and a black V.",w:"Okanagan grassland and sagebrush benches.",t:"Morning, on fence posts. Some still sing in autumn."},
+{k:"crossbill",g:"b",n:"Red crossbill and pine siskin",c:2,d:[3,4,5,6,7,8,9],id:"Finch flocks in the treetops. Crossbills are brick-red or olive with crossed bill tips and a hard ‘jip-jip’ call; siskins are small, streaky, with yellow in the wing and a rising ‘zzzreee’.",w:"Cone-laden spruce and pine anywhere on the route; often on the road eating grit and salt.",t:"All day, in restless flocks."},
+/* ---- reptiles and amphibians ---- */
+{k:"rattlesnake",g:"r",n:"Western rattlesnake",c:3,d:[1,2],id:"Thick-bodied, tan with dark brown blotches, a broad triangular head and a rattle. Canada’s only venomous snake here; shy and protected.",w:"Dry, rocky Okanagan slopes: Myra-Bellevue’s lower trails, Bear Creek canyon rim, Knox Mountain.",t:"By late September they are gathering at winter dens. A warm, sunny afternoon may bring one out to bask.",s:"Watch where you put hands and feet on sunny rocks. If you hear a rattle, stop, locate it, then step back. Give it 2 m and it will leave."},
+{k:"gophersnake",g:"r",n:"Great Basin gophersnake",c:3,d:[1,2],id:"Long (over a metre), cream with dark square blotches and a narrow head. Harmless, but hisses and vibrates its tail to mimic a rattlesnake.",w:"Okanagan grassland, orchards and roadsides.",t:"Warm afternoons until early October."},
+{k:"racer",g:"r",n:"Western yellow-bellied racer",c:3,d:[1,2],id:"Slim, plain olive-grey with a yellow belly and large eyes. Extremely fast.",w:"Open, dry Okanagan slopes.",t:"Warm, sunny days only; heading to dens now."},
+{k:"garter",g:"r",n:"Garter snake",c:2,d:[1,2,4,6],id:"Slender, dark, with pale yellow stripes running the length of the body. Harmless.",w:"Lake and creek edges in the Okanagan. In the Rockies it is the only snake: look near warm, wet ground such as the Cave and Basin marsh in Banff.",t:"Sunny midday, basking beside water. Rockies snakes are nearly all denned by October."},
+{k:"rubberboa",g:"r",n:"Northern rubber boa",c:3,d:[1,2,3],id:"Small, plain brown, smooth and rubbery looking, with a blunt tail that resembles a second head.",w:"Under logs and rocks in moist Okanagan and Shuswap woodland.",t:"Dusk on mild evenings; rarely seen."},
+{k:"turtle",g:"r",n:"Western painted turtle",c:2,d:[1,2],id:"Dark, smooth shell, yellow stripes on the head and neck, and a vivid red-orange pattern underneath.",w:"Kelowna’s ponds and quiet lake bays: Munson Pond and Chichester Wetland are reliable.",t:"Warm, sunny late mornings, basking in rows on logs. They stop once water temperatures drop."},
+{k:"skink",g:"r",n:"Western skink",c:3,d:[1,2],id:"Small, glossy, striped lizard. Young ones have an electric-blue tail.",w:"Under flat rocks on open, south-facing Okanagan slopes, including the Myra Canyon rock cuts.",t:"Warm afternoons."},
+{k:"alligatorlizard",g:"r",n:"Northern alligator lizard",c:3,d:[1,2,3],id:"Brown, rough-scaled, short-legged lizard with a fold of skin along each side.",w:"Rocky forest clearings and talus: Okanagan, Shuswap and the Revelstoke area.",t:"Warm afternoons, basking at the edge of cover."},
+{k:"toad",g:"r",n:"Western toad",c:3,d:[3,4,6,9],id:"Warty, olive to grey, with a pale stripe down the middle of the back. Walks rather than hops.",w:"Forest trails near wetlands in the Columbia Valley, Yoho, Jasper and Kananaskis.",t:"Damp, mild evenings; moving to winter burrows now."},
+{k:"spottedfrog",g:"r",n:"Columbia spotted frog",c:3,d:[4,6,9],id:"Brown with dark, light-centred spots, upturned eyes and salmon-pink under the legs.",w:"Pond and slow-stream margins: Emerald Lake outlet, Jasper’s valley ponds, Kananaskis beaver ponds.",t:"Sunny middays, sitting at the water’s edge until the first hard frosts."},
+/* ---- fish ---- */
+{k:"kokanee",g:"f",n:"Kokanee salmon",c:1,d:[1,2],id:"Land-locked sockeye. Spawning fish turn brilliant red with a green head; males develop a humped back and hooked jaw.",w:"Mission Creek Regional Park in Kelowna (spawning channel with viewing platforms) and Hardy Falls in Peachland. Ask the Bear Creek park staff whether fish are running in the creek beside the campground.",t:"The run peaks from mid September to early October, so Day 2 is ideal. Eagles, mergansers and sometimes bears gather for the fish.",s:"Stay out of the creek and keep dogs out: the gravel holds eggs."},
+{k:"bulltrout",g:"f",n:"Bull trout",c:3,d:[4,6,9],id:"Alberta’s provincial fish: olive with pale yellow and pink spots and white leading edges on the fins. No black spots.",w:"Clear, cold pools: Kananaskis River side channels, Jasper’s Maligne outlet, Yoho streams.",t:"Autumn spawners, so adults are in shallow gravel runs now. Polarised sunglasses help."}
+];
+</script>
 <script>(function(){
 "use strict";
 const $=(s,r)=> (r||document).querySelector(s), $$=(s,r)=>[...(r||document).querySelectorAll(s)];
@@ -1402,6 +1525,7 @@ const FAMILY=qs.get("view")==="family"||/family/.test(location.hash);
 const IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 const D=TRIP.days;
 let S=Object.assign({lengthM:TRIP.vehicle.lengthM,heightM:TRIP.vehicle.heightM,plate:"",units:"km",theme:"auto"},store.get("settings",{}));
+let seen=store.get("seen",{}), natF={g:"all",today:false,unseen:false}, natOpen={};
 let notes=store.get("notes",[]), who=store.get("who","J"), wx=store.get("wx",null), osrm=store.get("routes",{});
 let wxBlocked=false, cur=0, map=null, mapLayers={}, todayOnly=true, catOn={};
 
@@ -1577,6 +1701,26 @@ function renderMapBar(){
 function renderTips(){$("#view-tips").innerHTML=`<h1 class="disp" style="font-size:34px;margin:6px 0 12px">Late-season tips</h1>`+TRIP.tips.map(g=>`<section class="block"><h2>${g.g}</h2>${g.items.map(t=>`<div class="tip"><div>${esc(t)}</div></div>`).join("")}</section>`).join("")+`<p class="muted">General guidance checked ${CHECKED}. Park rules and closures change: the Links tab has the official pages.</p>`}
 function renderLinks(){$("#view-links").innerHTML=`<h1 class="disp" style="font-size:34px;margin:6px 0 4px">Live conditions</h1><p class="muted" style="margin:0 0 12px">These open in your browser and need a connection. Check them the evening before a driving day.</p>`+TRIP.links.map(g=>`<section class="block"><h2>${g.g}</h2>${g.items.map(l=>`<a class="linkrow" href="${l[1]}" target="_blank" rel="noopener"><span>${esc(l[0])}</span><span>Open</span></a>`).join("")}</section>`).join("")}
 
+/* ---------- nature spotting ---------- */
+function renderNature(keep){
+  const v=$("#view-nature"),y=v.scrollTop,d=D[cur];
+  const total=NATURE.length,got=NATURE.filter(a=>seen[a.k]).length;
+  const list=NATURE.filter(a=>(natF.g==="all"||a.g===natF.g)&&(!natF.today||a.d.includes(d.n))&&(!natF.unseen||!seen[a.k])).sort((a,b)=>natF.today?a.c-b.c:0);
+  const chip=(id,label,on)=>`<button class="chip" data-nat="${id}" aria-pressed="${on}">${label}</button>`;
+  let last="";
+  v.innerHTML=`<h1 class="disp" style="font-size:34px;margin:6px 0 4px">Nature spotting</h1>
+  <p class="muted" style="margin:0 0 10px">What you could see between Vancouver and Calgary in late September and early October. Chances are for this route at this time of year.</p>
+  ${FAMILY?"":`<div class="tally"><div><span class="count">${got}</span> of ${total} seen</div><div class="bar" role="img" aria-label="${got} of ${total} seen"><i style="width:${Math.round(got/total*100)}%"></i></div></div>`}
+  <div class="natbar" role="toolbar" aria-label="Filters">${chip("today",`Day ${d.n} only`,natF.today)}${FAMILY?"":chip("unseen","Not yet seen",natF.unseen)}${chip("all","All",natF.g==="all")}${Object.keys(NATURE_GROUPS).map(g=>chip(g,NATURE_GROUPS[g],natF.g===g)).join("")}</div>
+  ${list.length?"":`<p class="muted">Nothing matches these filters.</p>`}
+  ${list.map(a=>{const head=!natF.today&&a.g!==last?`<h2 class="nath">${NATURE_GROUPS[a.g]}</h2>`:"";last=a.g;const sn=seen[a.k];
+    return `${head}<article class="nat${sn?" seen":""}">${FAMILY?"":`<label class="tick"><input type="checkbox" data-seen="${a.k}" ${sn?"checked":""} aria-label="Seen ${esc(a.n)}"><span aria-hidden="true"></span></label>`}
+    <details data-k="${a.k}" ${natOpen[a.k]?"open":""}><summary><span class="nn">${esc(a.n)}</span><span class="ch c${a.c}">${CHANCE[a.c]}</span>${sn?`<span class="sn">Seen Day ${sn.day||"?"}, ${new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short"}).format(new Date(sn.ts))}</span>`:""}</summary>
+    <dl><dt>Look for</dt><dd>${esc(a.id)}</dd><dt>Where</dt><dd>${esc(a.w)}</dd><dt>When</dt><dd>${esc(a.t)}</dd>${a.s?`<dt>Take care</dt><dd>${esc(a.s)}</dd>`:""}<dt>Best days</dt><dd>${a.d.map(n=>"Day "+n).join(", ")}</dd></dl></details></article>`}).join("")}
+  <p class="muted" style="margin-top:14px">Keep 30 m from elk, deer, sheep, goats and moose, and 100 m from bears, wolves and cougars. Never feed wildlife. Sightings of bears, wolves, cougars or caribou are worth reporting at a Parks Canada visitor centre.</p>`;
+  if(keep)v.scrollTop=y;
+}
+
 /* ---------- settings ---------- */
 function applyTheme(){const r=document.documentElement;if(S.theme==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",S.theme)}
 function offlineStatus(){const el=$("#offstat");if(!el)return;
@@ -1589,7 +1733,7 @@ function openSettings(){
   <label for="sp">Number plate (for the Kananaskis pass)</label><input id="sp" type="text" autocapitalize="characters" value="${esc(S.plate)}">
   <div class="two"><div><label for="su">Distances</label><select id="su"><option value="km">Kilometres</option><option value="mi">Miles</option></select></div><div><label for="st">Appearance</label><select id="st"><option value="auto">Match phone</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div>
   <label>Offline</label><div id="offstat" class="status"></div><div class="btns"><button id="redl">Re-download the app</button></div>
-  <label>Notes</label><div class="btns"><button id="exp">Export notes</button><button id="imp">Import notes</button></div><textarea id="impbox" hidden placeholder="Paste exported notes here, then press Import notes again"></textarea>
+  <label>Notes and sightings</label><p class="muted">Export from one phone and import on the other to combine your notes and nature ticks.</p><div class="btns"><button id="exp">Export</button><button id="imp">Import</button></div><textarea id="impbox" hidden placeholder="Paste the exported text here, then press Import again"></textarea>
   <label>Share with family</label><p class="muted">Send them this link. They see the route and days, not your notes or vehicle details.</p><div class="btns"><button id="fam">Copy family link</button></div>
   <div class="btns" style="margin-top:18px"><button id="done" style="flex:1;background:var(--glacier);color:var(--card);border-color:var(--glacier)">Done</button></div></div>`;
   $("#su").value=S.units;$("#st").value=S.theme;offlineStatus();dlg.showModal();
@@ -1603,21 +1747,23 @@ function openSettings(){
 async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg)}catch(e){prompt("Copy this:",t)}}
 async function exportNotes(){
   const text=D.map(d=>{const l=notes.filter(n=>n.day===d.n).sort((a,b)=>a.ts-b.ts);return l.length?`Day ${d.n}, ${fmtDate(d.date)}: ${d.title}\n`+l.map(n=>`  [${n.who}] ${n.text}`).join("\n"):""}).filter(Boolean).join("\n\n");
-  const payload=JSON.stringify({app:"ca26-notes",v:1,notes});
-  if(!notes.length){toast("No notes to export yet");return}
+  const payload=JSON.stringify({app:"ca26-notes",v:2,notes,seen});
+  if(!notes.length&&!Object.keys(seen).length){toast("Nothing to export yet");return}
   try{const f=new File([payload],"canada-notes.json",{type:"application/json"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Canada trip notes",text});return}}catch(e){if(e&&e.name==="AbortError")return}
   await copy(payload,"Notes copied. Paste them into Import on the other phone");
 }
-function mergeNotes(j){const inc=(j&&j.notes)||[];const have=new Set(notes.map(n=>n.id));let add=0;inc.forEach(n=>{if(n&&n.id&&!have.has(n.id)&&n.text){notes.push({id:n.id,day:+n.day,who:String(n.who||"?").slice(0,2),ts:+n.ts,text:String(n.text)});add++}});store.set("notes",notes);return add}
-function importNotes(){const b=$("#impbox");if(b.hidden){b.hidden=false;b.focus();return}try{const n=mergeNotes(JSON.parse(b.value));b.value="";b.hidden=true;toast(n?`${n} note${n===1?"":"s"} added`:"Nothing new to add")}catch(e){toast("That does not look like exported notes")}}
+function mergeNotes(j){const inc=(j&&j.notes)||[];const have=new Set(notes.map(n=>n.id));let add=0;inc.forEach(n=>{if(n&&n.id&&!have.has(n.id)&&n.text){notes.push({id:n.id,day:+n.day,who:String(n.who||"?").slice(0,2),ts:+n.ts,text:String(n.text)});add++}});store.set("notes",notes);const is=(j&&j.seen)||{};Object.keys(is).forEach(k=>{if(NATURE.some(a=>a.k===k)&&is[k]&&(!seen[k]||is[k].ts<seen[k].ts)){seen[k]={ts:+is[k].ts,day:+is[k].day||0};add++}});store.set("seen",seen);return add}
+function importNotes(){const b=$("#impbox");if(b.hidden){b.hidden=false;b.focus();return}try{const n=mergeNotes(JSON.parse(b.value));b.value="";b.hidden=true;toast(n?`${n} new item${n===1?"":"s"} added`:"Nothing new to add")}catch(e){toast("That does not look like exported notes")}}
 
 /* ---------- events ---------- */
 function showTab(t){saveDraft();$$("main").forEach(m=>m.hidden=m.id!=="view-"+t);$$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
   if(t!=="map"&&loc.watch!=null){stopLocate()}
+  if(t==="nature")renderNature();
   if(t==="map"){initMap();setTimeout(()=>{map.invalidateSize();drawMap()},30)}}
 document.addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
   if(b.dataset.tab)return showTab(b.dataset.tab);
+  if(b.dataset.nat){const k=b.dataset.nat;if(k==="today")natF.today=!natF.today;else if(k==="unseen")natF.unseen=!natF.unseen;else natF.g=k;return renderNature()}
   if(b.dataset.day!=null)return go(+b.dataset.day);
   if(b.id==="prev")return go(cur-1); if(b.id==="next")return go(cur+1); if(b.id==="gear")return openSettings();
   if(b.dataset.who){who=b.dataset.who;store.set("who",who);$$("[data-who]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.who===who));return}
@@ -1627,6 +1773,10 @@ document.addEventListener("click",e=>{
   if(b.dataset.cat){const k=b.dataset.cat;catOn[k]=catOn[k]===false;b.setAttribute("aria-pressed",catOn[k]!==false);return drawMap(false)}
   if(b.id==="listtoggle"){const l=$("#maplist");l.hidden=!l.hidden;b.setAttribute("aria-pressed",!l.hidden);setTimeout(()=>map.invalidateSize(),30);return}
 });
+document.addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.seen;if(!k)return;
+  if(e.target.checked){const ti=dayIndexFor(todayStr());seen[k]={ts:Date.now(),day:ti>=0?D[ti].n:D[cur].n}}else delete seen[k];
+  if(!store.set("seen",seen))toast("Could not save: storage is full or blocked");renderNature(true)});
+document.addEventListener("toggle",e=>{const k=e.target.dataset&&e.target.dataset.k;if(k)natOpen[k]=e.target.open},true);
 document.addEventListener("input",e=>{if(e.target.id==="note")store.set("draft"+D[cur].n,e.target.value)});
 let sx=0,sy=0;const vt=$("#view-today");
 vt.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
