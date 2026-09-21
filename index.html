@@ -826,7 +826,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .tick input:checked+span::after{content:"";width:8px;height:15px;border:solid #fff;border-width:0 3.5px 3.5px 0;transform:rotate(45deg) translate(-1px,-2px)}
 .tick input:focus-visible+span{outline:3px solid var(--larch);outline-offset:2px}
 .nat details{flex:1;min-width:0}
-.nat summary{list-style:none;cursor:pointer;min-height:56px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:8px 22px 8px 4px;position:relative}
+.nat summary{list-style:none;cursor:pointer;min-height:66px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:8px 22px 8px 4px;position:relative}
 .nat summary::-webkit-details-marker{display:none}
 .nat summary::after{content:"";position:absolute;right:4px;top:24px;width:8px;height:8px;border:solid var(--muted);border-width:0 2px 2px 0;transform:rotate(45deg)}
 .nat details[open] summary::after{transform:rotate(-135deg);top:28px}
@@ -836,6 +836,14 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .c1{background:var(--sign);color:#fff}.c2{background:var(--heads-bg);color:#1d1a10}.c3{border:1.5px solid var(--muted);color:var(--muted)}.c4{border:1.5px dashed var(--line);color:var(--muted)}
 .sn{font-size:13px;color:var(--spruce);font-weight:700;flex-basis:100%}
 .nat dl{margin:0 0 10px 4px}.nat dt{font:600 15px/1.2 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-top:8px}.nat dd{margin:1px 0 0;font-size:16px}
+
+.thumb{flex:none;width:56px;height:56px;border-radius:10px;overflow:hidden;background:var(--line);margin:4px 6px 4px 0;align-self:flex-start}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.none{display:none}
+.photo{margin:2px 0 6px}
+.nat.hasph .photo,.nat.hasph dl{margin-left:-62px}
+.photo img{width:100%;max-height:300px;object-fit:cover;border-radius:10px;display:block;background:var(--line)}
+.photo figcaption{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.35}
 
 </style>
 </head>
@@ -1514,6 +1522,9 @@ const NATURE = [
 {k:"kokanee",g:"f",n:"Kokanee salmon",c:1,d:[1,2],id:"Land-locked sockeye. Spawning fish turn brilliant red with a green head; males develop a humped back and hooked jaw.",w:"Mission Creek Regional Park in Kelowna (spawning channel with viewing platforms) and Hardy Falls in Peachland. Ask the Bear Creek park staff whether fish are running in the creek beside the campground.",t:"The run peaks from mid September to early October, so Day 2 is ideal. Eagles, mergansers and sometimes bears gather for the fish.",s:"Stay out of the creek and keep dogs out: the gravel holds eggs."},
 {k:"bulltrout",g:"f",n:"Bull trout",c:3,d:[4,6,9],id:"Alberta’s provincial fish: olive with pale yellow and pink spots and white leading edges on the fins. No black spots.",w:"Clear, cold pools: Kananaskis River side channels, Jasper’s Maligne outlet, Yoho streams.",t:"Autumn spawners, so adults are in shallow gravel runs now. Polarised sunglasses help."}
 ];
+
+/* Wikipedia article whose lead photo is used for each species */
+const WIKI = {"elk":"Elk","muledeer":"Mule deer","whitetail":"White-tailed deer","moose":"Moose","bighorn":"Bighorn sheep","calbighorn":"Bighorn sheep","goat":"Mountain goat","blackbear":"American black bear","grizzly":"Grizzly bear","wolf":"Wolf","coyote":"Coyote","redfox":"Red fox","cougar":"Cougar","lynx":"Canada lynx","caribou":"Boreal woodland caribou","pika":"American pika","marmot":"Hoary marmot","ybmarmot":"Yellow-bellied marmot","gmsquirrel":"Golden-mantled ground squirrel","columbian":"Columbian ground squirrel","chipmunk":"Least chipmunk","redsquirrel":"American red squirrel","hare":"Snowshoe hare","beaver":"North American beaver","muskrat":"Muskrat","porcupine":"North American porcupine","marten":"American marten","otter":"North American river otter","bats":"Little brown bat","goldeneagle":"Golden eagle","baldeagle":"Bald eagle","osprey":"Osprey","redtail":"Red-tailed hawk","kestrel":"American kestrel","ghowl":"Great horned owl","pygmyowl":"Northern pygmy owl","nutcracker":"Clark's nutcracker","canadajay":"Canada jay","stellers":"Steller's jay","magpie":"Black-billed magpie","raven":"Common raven","dipper":"American dipper","loon":"Common loon","goldeneye":"Barrow's goldeneye","merganser":"Common merganser","goose":"Canada goose","swan":"Trumpeter swan","heron":"Great blue heron","kingfisher":"Belted kingfisher","crane":"Sandhill crane","ptarmigan":"White-tailed ptarmigan","sprucegrouse":"Spruce grouse","duskygrouse":"Dusky grouse","ruffedgrouse":"Ruffed grouse","quail":"California quail","mtnchickadee":"Mountain chickadee","bcchickadee":"Black-capped chickadee","borealchickadee":"Boreal chickadee","nuthatch":"Red-breasted nuthatch","kinglet":"Golden-crowned kinglet","junco":"Dark-eyed junco","variedthrush":"Varied thrush","pileated":"Pileated woodpecker","threetoed":"American three-toed woodpecker","flicker":"Northern flicker","bluebird":"Mountain bluebird","meadowlark":"Western meadowlark","crossbill":"Red crossbill","rattlesnake":"Crotalus oreganus","gophersnake":"Pituophis catenifer","racer":"Western yellow-bellied racer","garter":"Western terrestrial garter snake","rubberboa":"Rubber boa","turtle":"Painted turtle","skink":"Western skink","alligatorlizard":"Northern alligator lizard","toad":"Western toad","spottedfrog":"Columbia spotted frog","kokanee":"Kokanee salmon","bulltrout":"Bull trout"};
 </script>
 <script>(function(){
 "use strict";
@@ -1701,22 +1712,69 @@ function renderMapBar(){
 function renderTips(){$("#view-tips").innerHTML=`<h1 class="disp" style="font-size:34px;margin:6px 0 12px">Late-season tips</h1>`+TRIP.tips.map(g=>`<section class="block"><h2>${g.g}</h2>${g.items.map(t=>`<div class="tip"><div>${esc(t)}</div></div>`).join("")}</section>`).join("")+`<p class="muted">General guidance checked ${CHECKED}. Park rules and closures change: the Links tab has the official pages.</p>`}
 function renderLinks(){$("#view-links").innerHTML=`<h1 class="disp" style="font-size:34px;margin:6px 0 4px">Live conditions</h1><p class="muted" style="margin:0 0 12px">These open in your browser and need a connection. Check them the evening before a driving day.</p>`+TRIP.links.map(g=>`<section class="block"><h2>${g.g}</h2>${g.items.map(l=>`<a class="linkrow" href="${l[1]}" target="_blank" rel="noopener"><span>${esc(l[0])}</span><span>Open</span></a>`).join("")}</section>`).join("")}
 
+/* ---------- species photos (Wikipedia lead images, kept for offline) ---------- */
+let photos=store.get("photos",null), photoState={busy:false,done:0,total:0,blocked:false};
+const WAPI="https://en.wikipedia.org/w/api.php?format=json&formatversion=2&origin=*&action=query&";
+const plain=h=>{const d=new DOMParser().parseFromString(String(h||""),"text/html");return (d.body.textContent||"").replace(/\s+/g," ").trim().slice(0,80)};
+async function loadPhotos(force){
+  if(photoState.busy)return; if(!navigator.onLine){if(photos)prefetchPhotos();return} if(photos&&!force&&Object.keys(photos).length)return prefetchPhotos();
+  photoState.busy=true;
+  try{
+    const titles=[...new Set(Object.values(WIKI))],byTitle={};
+    for(let i=0;i<titles.length;i+=40){
+      const r=await fetch(WAPI+"redirects=1&prop=pageimages&piprop=thumbnail%7Cname&pithumbsize=500&pilimit=50&titles="+encodeURIComponent(titles.slice(i,i+40).join("|")));
+      const q=(await r.json()).query||{},map={};
+      (q.normalized||[]).forEach(n=>map[n.from]=n.to);const red={};(q.redirects||[]).forEach(n=>red[n.from]=n.to);
+      const pages={};(q.pages||[]).forEach(p=>pages[p.title]=p);
+      titles.slice(i,i+40).forEach(t=>{let x=map[t]||t;x=red[x]||x;const p=pages[x];if(p&&p.thumbnail)byTitle[t]={src:p.thumbnail.source,file:p.pageimage,page:p.title}});
+    }
+    const files=[...new Set(Object.values(byTitle).map(b=>"File:"+b.file))],info={};
+    for(let i=0;i<files.length;i+=40){
+      const r=await fetch(WAPI+"prop=imageinfo&iiprop=extmetadata%7Curl&iiextmetadatafilter=Artist%7CLicenseShortName&titles="+encodeURIComponent(files.slice(i,i+40).join("|")));
+      const q=(await r.json()).query||{},map={};(q.normalized||[]).forEach(n=>map[n.to]=n.from);
+      (q.pages||[]).forEach(p=>{const ii=p.imageinfo&&p.imageinfo[0];if(!ii)return;const m=ii.extmetadata||{};const v={by:plain(m.Artist&&m.Artist.value),lic:plain(m.LicenseShortName&&m.LicenseShortName.value),url:ii.descriptionurl};info[p.title]=v;if(map[p.title])info[map[p.title]]=v});
+    }
+    photos={};Object.keys(WIKI).forEach(k=>{const b=byTitle[WIKI[k]];if(!b)return;const m=info["File:"+b.file]||info["File:"+b.file.replace(/_/g," ")]||{};photos[k]={src:b.src,page:b.page,by:m.by||"",lic:m.lic||"",url:m.url||("https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(b.file))}});
+    store.set("photos",photos);photoState.busy=false;if(!$("#view-nature").hidden)renderNature(true);prefetchPhotos();
+  }catch(e){photoState.busy=false;photoState.blocked=true;if(!$("#view-nature").hidden)renderNature(true)}
+}
+async function prefetchPhotos(){ /* pull every photo through the service worker once so it is there offline */
+  if(photoState.busy||!photos||!window.caches)return;const list=[...new Set(Object.values(photos).map(p=>p.src))];
+  let have=0;try{const c=await caches.open("ca26-photos");for(const u of list)if(await c.match(u))have++}catch(e){return}
+  photoState.total=list.length;photoState.done=have;updatePhotoStat();if(have>=list.length||!navigator.onLine)return;
+  photoState.busy=true;const c=await caches.open("ca26-photos");const todo=[];for(const u of list)if(!(await c.match(u)))todo.push(u);
+  const worker=async()=>{while(todo.length){const u=todo.shift();try{const r=await fetch(u,{mode:"cors"});if(r.ok){await c.put(u,r.clone())}}catch(e){}photoState.done++;updatePhotoStat()}};
+  await Promise.all([worker(),worker(),worker()]);photoState.busy=false;
+  let ok=0;for(const u of list)if(await c.match(u))ok++;photoState.done=ok;updatePhotoStat();
+}
+function photoStatText(){if(photoState.blocked&&!photos)return"Photos could not be reached from this copy of the app. They load on the hosted version.";
+  if(!photos)return navigator.onLine?"Fetching photos…":"Photos download the first time you open this tab with a connection.";
+  if(!window.caches||!window.__sw)return"Photos are showing from the internet. On the hosted, installed app they are saved for offline use.";
+  if(photoState.total&&photoState.done>=photoState.total)return`All ${photoState.total} photos are saved on this phone for offline use.`;
+  if(photoState.total&&!navigator.onLine)return`${photoState.done} of ${photoState.total} photos are saved on this phone. The rest will download when you next have a connection.`;
+  if(photoState.total)return`Saving photos for offline: ${photoState.done} of ${photoState.total}. Stay on wifi until this finishes.`;return""}
+function updatePhotoStat(){const el=$("#photostat");if(el)el.textContent=photoStatText()}
+
 /* ---------- nature spotting ---------- */
 function renderNature(keep){
   const v=$("#view-nature"),y=v.scrollTop,d=D[cur];
   const total=NATURE.length,got=NATURE.filter(a=>seen[a.k]).length;
   const list=NATURE.filter(a=>(natF.g==="all"||a.g===natF.g)&&(!natF.today||a.d.includes(d.n))&&(!natF.unseen||!seen[a.k])).sort((a,b)=>natF.today?a.c-b.c:0);
+  const ph=(a,kind)=>{const p=photos&&photos[a.k];if(!p)return kind==="thumb"?`<span class="thumb none" aria-hidden="true"></span>`:"";
+    if(kind==="thumb")return `<span class="thumb"><img src="${esc(p.src)}" alt="" loading="lazy" crossorigin="anonymous" onerror="this.parentNode.classList.add('none');this.remove()"></span>`;
+    return `<figure class="photo"><img src="${esc(p.src)}" alt="Photo of ${esc(a.n)}" loading="lazy" crossorigin="anonymous" onerror="this.closest('figure').remove()"><figcaption>Photo: ${esc(p.by||"see source")}${p.lic?", "+esc(p.lic):""}, via <a href="${esc(p.url)}" target="_blank" rel="noopener">Wikimedia Commons</a>. <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(p.page.replace(/ /g,"_"))}" target="_blank" rel="noopener">More photos</a></figcaption></figure>`};
   const chip=(id,label,on)=>`<button class="chip" data-nat="${id}" aria-pressed="${on}">${label}</button>`;
   let last="";
   v.innerHTML=`<h1 class="disp" style="font-size:34px;margin:6px 0 4px">Nature spotting</h1>
   <p class="muted" style="margin:0 0 10px">What you could see between Vancouver and Calgary in late September and early October. Chances are for this route at this time of year.</p>
   ${FAMILY?"":`<div class="tally"><div><span class="count">${got}</span> of ${total} seen</div><div class="bar" role="img" aria-label="${got} of ${total} seen"><i style="width:${Math.round(got/total*100)}%"></i></div></div>`}
+  <p class="muted" id="photostat" style="margin:0 0 8px">${photoStatText()}</p>
   <div class="natbar" role="toolbar" aria-label="Filters">${chip("today",`Day ${d.n} only`,natF.today)}${FAMILY?"":chip("unseen","Not yet seen",natF.unseen)}${chip("all","All",natF.g==="all")}${Object.keys(NATURE_GROUPS).map(g=>chip(g,NATURE_GROUPS[g],natF.g===g)).join("")}</div>
   ${list.length?"":`<p class="muted">Nothing matches these filters.</p>`}
   ${list.map(a=>{const head=!natF.today&&a.g!==last?`<h2 class="nath">${NATURE_GROUPS[a.g]}</h2>`:"";last=a.g;const sn=seen[a.k];
-    return `${head}<article class="nat${sn?" seen":""}">${FAMILY?"":`<label class="tick"><input type="checkbox" data-seen="${a.k}" ${sn?"checked":""} aria-label="Seen ${esc(a.n)}"><span aria-hidden="true"></span></label>`}
-    <details data-k="${a.k}" ${natOpen[a.k]?"open":""}><summary><span class="nn">${esc(a.n)}</span><span class="ch c${a.c}">${CHANCE[a.c]}</span>${sn?`<span class="sn">Seen Day ${sn.day||"?"}, ${new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short"}).format(new Date(sn.ts))}</span>`:""}</summary>
-    <dl><dt>Look for</dt><dd>${esc(a.id)}</dd><dt>Where</dt><dd>${esc(a.w)}</dd><dt>When</dt><dd>${esc(a.t)}</dd>${a.s?`<dt>Take care</dt><dd>${esc(a.s)}</dd>`:""}<dt>Best days</dt><dd>${a.d.map(n=>"Day "+n).join(", ")}</dd></dl></details></article>`}).join("")}
+    return `${head}<article class="nat${sn?" seen":""}${photos&&photos[a.k]?" hasph":""}">${FAMILY?"":`<label class="tick"><input type="checkbox" data-seen="${a.k}" ${sn?"checked":""} aria-label="Seen ${esc(a.n)}"><span aria-hidden="true"></span></label>`}
+    ${ph(a,"thumb")}<details data-k="${a.k}" ${natOpen[a.k]?"open":""}><summary><span class="nn">${esc(a.n)}</span><span class="ch c${a.c}">${CHANCE[a.c]}</span>${sn?`<span class="sn">Seen Day ${sn.day||"?"}, ${new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short"}).format(new Date(sn.ts))}</span>`:""}</summary>
+    ${ph(a,"big")}<dl><dt>Look for</dt><dd>${esc(a.id)}</dd><dt>Where</dt><dd>${esc(a.w)}</dd><dt>When</dt><dd>${esc(a.t)}</dd>${a.s?`<dt>Take care</dt><dd>${esc(a.s)}</dd>`:""}<dt>Best days</dt><dd>${a.d.map(n=>"Day "+n).join(", ")}</dd></dl></details></article>`}).join("")}
   <p class="muted" style="margin-top:14px">Keep 30 m from elk, deer, sheep, goats and moose, and 100 m from bears, wolves and cougars. Never feed wildlife. Sightings of bears, wolves, cougars or caribou are worth reporting at a Parks Canada visitor centre.</p>`;
   if(keep)v.scrollTop=y;
 }
@@ -1741,7 +1799,7 @@ function openSettings(){
   dlg.oninput=save;dlg.onchange=save;
   $("#done").onclick=()=>{save();dlg.close();renderToday()};
   $("#fam").onclick=()=>copy(location.origin+location.pathname+"?view=family","Family link copied");
-  $("#redl").onclick=async()=>{try{if(window.caches){for(const k of await caches.keys())if(k.startsWith("ca26-app"))await caches.delete(k)}const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(e){}location.reload()};
+  $("#redl").onclick=async()=>{try{if(window.caches){for(const k of await caches.keys())if(k.startsWith("ca26-app"))await caches.delete(k)}try{localStorage.removeItem("ca26.photos")}catch(e){}const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(e){}location.reload()};
   $("#exp").onclick=exportNotes;$("#imp").onclick=importNotes;
 }
 async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg)}catch(e){prompt("Copy this:",t)}}
@@ -1758,7 +1816,7 @@ function importNotes(){const b=$("#impbox");if(b.hidden){b.hidden=false;b.focus(
 /* ---------- events ---------- */
 function showTab(t){saveDraft();$$("main").forEach(m=>m.hidden=m.id!=="view-"+t);$$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
   if(t!=="map"&&loc.watch!=null){stopLocate()}
-  if(t==="nature")renderNature();
+  if(t==="nature"){renderNature();loadPhotos()}
   if(t==="map"){initMap();setTimeout(()=>{map.invalidateSize();drawMap()},30)}}
 document.addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
@@ -1782,7 +1840,7 @@ let sx=0,sy=0;const vt=$("#view-today");
 vt.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
 vt.addEventListener("touchend",e=>{if(e.target.closest("textarea,.strip"))return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*2)go(cur+(dx<0?1:-1))},{passive:true});
 document.addEventListener("keydown",e=>{if(e.target.matches("textarea,input,select"))return;if(!$("#view-today").hidden){if(e.key==="ArrowLeft")go(cur-1);if(e.key==="ArrowRight")go(cur+1)}});
-window.addEventListener("online",()=>{loadWx();refineRoutes()});
+window.addEventListener("online",()=>{loadWx();refineRoutes();loadPhotos()});
 
 /* ---------- start ---------- */
 applyTheme();
@@ -1791,7 +1849,7 @@ const ti=dayIndexFor(todayStr());cur=ti>=0?ti:0;
 renderToday();renderTips();renderLinks();renderMapBar();
 if(todayStr()>TRIP.end){todayOnly=false}
 loadWx();setTimeout(refineRoutes,1500);
-if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{window.__sw=true;if(!store.get("swtoast")){toast("Ready for offline");store.set("swtoast",1)}offlineStatus()}).catch(()=>{})}
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(()=>{window.__sw=true;setTimeout(loadPhotos,4000);if(!store.get("swtoast")){toast("Ready for offline");store.set("swtoast",1)}offlineStatus()}).catch(()=>{})}
 })();
 </script>
 </body>
